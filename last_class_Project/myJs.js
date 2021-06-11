@@ -26,3 +26,33 @@ window.onload = function pageOnload() {
                 });
         }
 
+        function printUserData(data) {
+            let latid = data.address.geo.lat;
+            let long = data.address.geo.lng;
+            let currentLocation;
+            getCurrentLocation();
+
+            async function getCurrentLocation() {
+                let resultLocations = await fetch(
+                    "https://mapquestapi.com/geocoding/v1/reverse?key=q5N7YWFQnHlQCfx0KyD5d1qoATAAFezV&location=" +
+                    latid +
+                    "," +
+                    long
+                );
+                let jsonLocation = await resultLocations.json();
+                currentLocation = jsonLocation.results[0].locations[0].street;
+                if (currentLocation === "") {
+                    navigator.geolocation.getCurrentPosition(latLong, failToLoad);
+                }
+
+                function latLong(position) {
+                    latid = position.coords.latitude;
+                    long = position.coords.longitude;
+                    fetchCurrentLocation();
+                }
+
+                function failToLoad() {
+                    alert("current locations failed to load");
+                }
+                console.log(currentLocation);
+            }
