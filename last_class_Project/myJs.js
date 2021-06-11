@@ -25,7 +25,6 @@ window.onload = function pageOnload() {
                     printUserData(data);
                 });
         }
-
         function printUserData(data) {
             let latid = data.address.geo.lat;
             let long = data.address.geo.lng;
@@ -56,3 +55,75 @@ window.onload = function pageOnload() {
                 }
                 console.log(currentLocation);
             }
+            let getPost = document.getElementById("idBut");
+            getPost.onclick = fetchUserPost;
+            let userPost = document.getElementById("user-post");
+            userPost.innerHTML = "";
+
+            async function fetchUserPost() {
+                let id = Number(getPost.value);
+                let post = await fetch('https://jsonplaceholder.typicode.com/posts')
+                let jsonPost = await post.json();
+                let filterData = jsonPost.filter(elem => elem.userId === id)
+                filterData.forEach(filterPost => {
+
+                    console.log(filterPost)
+                    let postId = filterPost.id;
+                    let postTemplate = ` 
+                                   <div class="col">
+           
+                                   <p>title: ${filterPost.title}</p>
+                                   <p>body:${filterPost.body} </p>
+                                   <button id="commentBut" value="${postId}">Get comment</button>
+                                   <div id="comment-list"></div>
+                                   `;
+                    const divPost = document.createElement("diV-post");
+                    divPost.innerHTML = postTemplate;
+                    userPost.appendChild(divPost);
+                    let postCommentBut = document.getElementById("commentBut");
+                    postCommentBut.id = "commentDisplay";
+                    let userComment = document.getElementById("comment-list");
+                    userComment.id = "list-of-comments";
+                })
+                postCommentBut = document.getElementById("commentDisplay")
+                postCommentBut.addEventListener("click", fetchComments, false);
+
+                async function fetchComments() {
+
+                    console.log(document.getElementById("commentDisplay").value)
+
+                }
+
+                async function fetchComments() {
+                    const commentResult = await fetch("https://jsonplaceholder.typicode.com/comments");
+
+                    const commentJson = await commentResult.json();
+                    let comId = Number(postCommentBut.value);
+
+                    from(commentJson)
+                        .pipe(filter((commentDta) => commentDta.postId === comId))
+                        .subscribe((commentDta) => {
+                            displayComments(commentDta);
+                        });
+
+                    function displayComments(commentDta) {
+
+                    }
+                }
+                console.log(commentDta);
+                let commentTemplate = `     
+                                              <div class="col">
+                                              <h6 style="color: red;">Comment:</h6>
+                                                  <p>name:  ${commentDta.name}</p>
+                                                  <p>email:   ${postData.body} </p>
+                                                  <p>comment: ${postData.body} </p>
+                                              </div> ;    
+                                          
+    
+                const postComment = document.createElement("post-comments");
+                postComment.innerHTML = commentTemplate;
+                userComment.append(postComment);
+            }
+        }
+    }
+}   
