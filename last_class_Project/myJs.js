@@ -125,5 +125,5 @@ window.onload = function pageOnload() {
                 userComment.append(postComment);
             }
         }
-    }
+    } 
 }   
